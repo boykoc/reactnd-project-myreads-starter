@@ -1,6 +1,39 @@
 import React, { Component } from 'react'
+import * as BooksAPI from './BooksAPI'
+import Book from './Book'
+import debounce from 'lodash/debounce'
 
 class SearchBooks extends Component {
+  state = {
+    query: '',
+    results: []
+  }
+
+  updateQuery = (query) => {
+    this.setState({ query })
+    if (query === '') {
+      this.clearResults()
+    }
+    this.search(query)
+  }
+
+  search = debounce((query) => {
+    if (query) {
+      BooksAPI.search(query).then((results) => {
+        // Without this guard it wont let the user clear search results.
+        if (results.length) {
+          this.setState({ results: results })
+        } else {
+          this.clearResults()
+        }
+      })
+    }
+  }, 250)
+
+  clearResults = () => {
+    this.setState({ results: [] })
+  }
+
   render() {
     return (
       <div className="search-books">
@@ -17,12 +50,27 @@ class SearchBooks extends Component {
               However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
               you don't find a specific author or title. Every search is limited by search terms.
             */}
-            <input type="text" placeholder="Search by title or author"/>
+            <input 
+              type="text"
+              placeholder="Search by title or author"
+              value={this.state.query}
+              onChange={(event) => this.updateQuery(event.target.value)}
+            />
             
           </div>
         </div>
         <div className="search-books-results">
-          <ol className="books-grid"></ol>
+          {!this.state.results.length && this.state.query && (
+            <p>Sorry, no results matching that title.</p>
+          )}
+          <ol className="books-grid">
+            {this.state.results.map((book) => (
+              <Book 
+                key={book.id}
+                book={book} 
+              />
+            ))}
+          </ol>
         </div>
       </div>    
     )

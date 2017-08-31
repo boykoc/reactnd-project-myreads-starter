@@ -3,7 +3,7 @@
 Note: It is assumed you have NPM and Node installed.
 
 - `clone` this repository to your machine.
-- go to the new repository with 'cd reactnd-project-myreads-starter/'
+- go to the new repository with `cd reactnd-project-myreads-starter/`
 - run `npm install`
 
 ## Luanch Instructions

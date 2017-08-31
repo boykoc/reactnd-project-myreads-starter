@@ -18,6 +18,7 @@ class BooksApp extends React.Component {
   
   // Get all of the books for the shelves and set state.
   componentDidMount() {
+    // TODO: Remove this after development.
     console.log(BooksAPI.getAll());
     BooksAPI.getAll().then((books) => {
       this.setState({ books })
