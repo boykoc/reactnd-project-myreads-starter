@@ -2,6 +2,10 @@ import React, { Component } from 'react'
 import Book from './Book'
 
 class ListBooks extends Component {
+  updateBookShelf = (id, shelf) => {
+    this.setState({  })
+  }
+  
   render() {
     return (
       <div className="list-books">
@@ -17,7 +21,8 @@ class ListBooks extends Component {
                   {this.props.books.filter((book) => book.shelf === 'currentlyReading').map((book) => (
                     <Book 
                       key={book.id}
-                      book={book} 
+                      book={book}
+                      onUpdateShelf={this.updateBookShelf}
                     />
                   ))}
                 </ol>
@@ -30,7 +35,8 @@ class ListBooks extends Component {
                   {this.props.books.filter((book) => book.shelf === 'wantToRead').map((book) => (
                     <Book 
                       key={book.id}
-                      book={book} 
+                      book={book}
+                      onUpdateShelf={this.updateBookShelf}
                     />
                   ))}
                 </ol>
@@ -43,7 +49,8 @@ class ListBooks extends Component {
                   {this.props.books.filter((book) => book.shelf === 'read').map((book) => (
                     <Book 
                       key={book.id}
-                      book={book} 
+                      book={book}
+                      onUpdateShelf={this.updateBookShelf}
                     />
                   ))}
                 </ol>
