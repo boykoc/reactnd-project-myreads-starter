@@ -4,7 +4,10 @@ import * as BooksAPI from './BooksAPI'
 
 class ListBooks extends Component {
   state = {
-    books: []
+    none: [],
+    currentlyReading: [],
+    wantToRead: [],
+    read: []
   }
 
   // Get all of the books for the shelves and set state.
@@ -14,7 +17,16 @@ class ListBooks extends Component {
   
   getBookList = () => {
     BooksAPI.getAll().then((books) => {
-      this.setState({ books })
+      this.setState({ 
+        currentlyReading: books.filter((book) => book.shelf === 'currentlyReading')
+      })
+      this.setState({
+        wantToRead: books.filter((book) => book.shelf === 'wantToRead')
+      })
+      
+      this.setState({
+        read: books.filter((book) => book.shelf === 'read')
+      })
     })
   }
   
@@ -29,8 +41,10 @@ class ListBooks extends Component {
     // Should be able to set that as a state. Maybe when I first get books state
     // I can filter it and fill my other states, then use this to update states 
     // as the user updates them.
-    BooksAPI.update(this.state.books.find((c) => c.id === id), shelf).then(
-      this.getBookList()
+    let books = this.state.currentlyReading.concat(this.state.wantToRead).concat(this.state.read)
+    BooksAPI.update(books.find((c) => c.id === id), shelf).then((updatedShelf) => {
+        this.getBookList()
+      }
     )
   }
   
@@ -46,7 +60,7 @@ class ListBooks extends Component {
               <h2 className="bookshelf-title">Currently Reading</h2>
               <div className="bookshelf-books">
                 <ol className="books-grid">
-                  {this.state.books.filter((book) => book.shelf === 'currentlyReading').map((book) => (
+                  {this.state.currentlyReading.map((book) => (
                     <Book 
                       key={book.id}
                       book={book}
@@ -60,7 +74,7 @@ class ListBooks extends Component {
               <h2 className="bookshelf-title">Want to Read</h2>
               <div className="bookshelf-books">
                 <ol className="books-grid">
-                  {this.state.books.filter((book) => book.shelf === 'wantToRead').map((book) => (
+                  {this.state.wantToRead.map((book) => (
                     <Book 
                       key={book.id}
                       book={book}
@@ -74,7 +88,7 @@ class ListBooks extends Component {
               <h2 className="bookshelf-title">Read</h2>
               <div className="bookshelf-books">
                 <ol className="books-grid">
-                  {this.state.books.filter((book) => book.shelf === 'read').map((book) => (
+                  {this.state.read.map((book) => (
                     <Book 
                       key={book.id}
                       book={book}
