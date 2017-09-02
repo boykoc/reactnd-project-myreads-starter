@@ -6,7 +6,8 @@ import debounce from 'lodash/debounce'
 class SearchBooks extends Component {
   state = {
     query: '',
-    results: []
+    results: [],
+    myBooks: []
   }
 
   updateQuery = (query) => {
@@ -22,6 +23,7 @@ class SearchBooks extends Component {
       BooksAPI.search(query).then((results) => {
         // Without this guard it wont let the user clear search results.
         if (results.length) {
+          console.log(results)
           this.setState({ results: results })
         } else {
           this.clearResults()
@@ -33,8 +35,44 @@ class SearchBooks extends Component {
   clearResults = () => {
     this.setState({ results: [] })
   }
+  
+  updateBookShelf = (id, shelf) => {
+    // set state
+    // this.setState((state) => ({
+    //   books: state.books.find((c) => c.id === id).shelf = shelf
+    // }))
+    // console.log(this.state.books.find((c) => c.id === id))
+    // // update book
+    // #update() does return my shelf that I'm adding a book to.
+    // Should be able to set that as a state. Maybe when I first get books state
+    // I can filter it and fill my other states, then use this to update states 
+    // as the user updates them.
+    BooksAPI.update(this.state.results.find((c) => c.id === id), shelf)
+  }
+
+  // Get all of the books for the shelves.
+  componentDidMount() {
+    BooksAPI.getAll().then((myBooks) => {
+      this.setState({myBooks})
+    })
+  }
 
   render() {
+    // Map over the results and the myBooks and create resultsWithShelf like
+    // in the contacts app.
+    // The else block setting to none overrode this I think. Also, this is updating the result and creating a
+    // 2d array for resultswithshelf
+    let resultsWithShelf = []
+    // Map over results and for each result map over myBooks to find matches.
+    resultsWithShelf = this.state.results.map(result => this.state.myBooks.map(myBook => {
+      if(result.id === myBook.id){
+        result.shelf = myBook.shelf
+        return result
+      } 
+    }))
+    
+    console.log(resultsWithShelf)
+    
     return (
       <div className="search-books">
         <div className="search-books-bar">
@@ -68,6 +106,7 @@ class SearchBooks extends Component {
               <Book 
                 key={book.id}
                 book={book} 
+                onUpdateShelf={this.updateBookShelf}
               />
             ))}
           </ol>
